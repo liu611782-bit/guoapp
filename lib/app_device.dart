@@ -198,6 +198,25 @@ class AppDevice {
     }
   }
 
+ 
+  /// Opens the Android share chooser for one or more completed MP4 files.
+  static Future<void> shareVideos(List<String> paths) async {
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      throw AppFailure('当前平台暂不支持分享本地视频');
+    }
+    if (paths.isEmpty) return;
+
+    try {
+      await channel.invokeMethod<void>('shareVideos', {
+        'paths': paths,
+      });
+    } on PlatformException catch (error) {
+      throw AppFailure(error.message ?? '分享失败');
+    } on MissingPluginException {
+      throw AppFailure('当前版本尚未支持视频分享，请更新应用');
+    }
+  }
+
   static Future<void> deleteDocument(String uri) async {
     try {
       await channel.invokeMethod<bool>('deleteDocument', {'uri': uri});
