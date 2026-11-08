@@ -288,12 +288,12 @@ jobs:
           ZHENGUOJIAN_CERT_SHA256: ${{ vars.ZHENGUOJIAN_CERT_SHA256 }}
         run: |
           set -euo pipefail
-          name="${ZHENGUOJIAN_DISPLAY_NAME:-真果鉴}"
+          name="果洞漫剧"
           cat > notes.md <<EOF
           版本 ${VERSION}。两个版本功能相同，区别只在站源范围，按需选择：
 
-          - 红果鉴 hongguojian：仅红果站源
-          - ${name} zhenguojian：全部站源
+          - ${name} 红果版 hongguojian：仅红果站源
+          - ${name} 全站版 zhenguojian：全部站源
 
           Android：
           - *-arm64-v8a.apk：适用于较新的安卓设备
@@ -308,11 +308,11 @@ jobs:
           - *-windows-x64.zip：便携版，解压后运行 hongguojian.exe 或 zhenguojian.exe
 
           macOS：
-          - *-macos-universal.dmg：适用于 macOS 12 及以上的 Apple 芯片和 Intel 电脑，打开后拖入 Applications；未经公证，首次打开前在终端执行 xattr -dr com.apple.quarantine /Applications/红果鉴.app（${name}为 ${name}.app）
+          - *-macos-universal.dmg：适用于 macOS 12 及以上的 Apple 芯片和 Intel 电脑，打开后拖入 Applications；未经公证，首次打开前在终端执行 xattr -dr com.apple.quarantine /Applications/${name}.app
 
           签名证书 SHA-256：
-          - 红果鉴：${ANDROID_CERT_SHA256}
-          - ${name}：${ZHENGUOJIAN_CERT_SHA256}
+          - ${name} 红果版：${ANDROID_CERT_SHA256}
+          - ${name} 全站版：${ZHENGUOJIAN_CERT_SHA256}
           EOF
           changes="$(awk -v heading="## ${VERSION}" '
             $0 == heading { found = 1; next }
@@ -325,7 +325,7 @@ jobs:
             { printf '更新内容：\n\n%s\n\n' "$changes"; cat notes.md; } > notes.tmp
             mv notes.tmp notes.md
           fi
-          gh release create "$TAG" release/* --target "$GITHUB_SHA" --title "红果鉴 / ${name} ${VERSION}" --notes-file notes.md
+          gh release create "$TAG" release/* --target "$GITHUB_SHA" --title "${name} ${VERSION}" --notes-file notes.md
       - name: 推送到 Telegram 频道
         continue-on-error: true
         env:
@@ -339,10 +339,10 @@ jobs:
             echo "未配置 Telegram，跳过推送。"
             exit 0
           fi
-          name="${ZHENGUOJIAN_DISPLAY_NAME:-真果鉴}"
+          name="果洞漫剧"
           changes="$(cat changes.md)"
           url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$TAG"
-          text="红果鉴 / ${name} ${VERSION} 已发布"
+          text="${name} ${VERSION} 已发布"
           if [ -n "$changes" ]; then
             text="$(printf '%s\n\n更新内容：\n\n%s' "$text" "${changes:0:3500}")"
           fi
