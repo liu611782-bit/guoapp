@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" width="120" alt="红果鉴图标">
+<img src="ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" width="120" alt="果洞漫剧图标">
 
-# 红果鉴
+# 果洞漫剧
 
 Flutter 多端独立短剧 / 影视应用，手机、平板、电脑和电视分别适配
 
-[![Release](https://img.shields.io/github/v/release/Xanerix/guoapp?style=flat-square&color=3d4656)](../../releases)
+[![Release](https://img.shields.io/github/v/release/liu611782-bit/guoapp?style=flat-square&color=3d4656)](../../releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-3d4656?style=flat-square)](LICENSE)
 ![Flutter](https://img.shields.io/badge/Flutter-3.47.9-02569B?style=flat-square&logo=flutter&logoColor=white)
 ![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS-8fa3bc?style=flat-square)
@@ -17,12 +17,12 @@ Flutter 多端独立短剧 / 影视应用，手机、平板、电脑和电视分
 
 ---
 
-本项目改编自 [fish2018](https://github.com/fish2018) 的源码，分两个版本发布：
+本项目改编自开源短剧客户端源码，分两个版本发布：
 
 | 版本 | 站源 | 安装包前缀 |
 | --- | --- | --- |
-| **红果鉴** | 只含红果站源 | `hongguojian-` |
-| **全站源版** | 含全部站源，可在设置里逐个开关 | `zhenguojian-` |
+| **果洞漫剧** | 只含红果站源 | `hongguojian-` |
+| **果洞漫剧（全站源）** | 含全部站源，可在设置里逐个开关 | `zhenguojian-` |
 
 ## 功能
 
@@ -92,12 +92,12 @@ Flutter 多端独立短剧 / 影视应用，手机、平板、电脑和电视分
 
 ## 安装
 
-在 [Releases](../../releases) 下载对应平台的包：`hongguojian-` 开头的是红果鉴，`zhenguojian-` 开头的是全站源版。
+在 [Releases](../../releases) 下载对应平台的包：`hongguojian-` 开头的是果洞漫剧，`zhenguojian-` 开头的是全站源版。
 
 | 平台 | 安装包 |
 | --- | --- |
 | Android 7.0+ | arm64-v8a / armeabi-v7a / x86_64 三种 APK，按设备架构选择（大多数手机选 arm64-v8a）；同一签名可覆盖升级，旧证书版本需卸载重装 |
-| Windows 10/11 x64 | 安装包 `*-setup.exe`，默认安装到当前用户、无需管理员权限；或便携 ZIP，解压后运行 `hongguojian.exe` / `zhenguojian.exe`，保留所有 DLL 与 `data` 目录 |
+| Windows 10/11 x64 | 安装包 `*-setup.exe`，默认安装到当前用户、无需管理员权限；或便携 ZIP，解压后运行可执行文件，保留所有 DLL 与 `data` 目录 |
 | iOS 15.1+ | 未签名 IPA，需自行签名或用 iloader 等工具侧载 |
 | macOS 12+ | 通用 dmg（Apple 芯片与 Intel），打开后拖入「应用程序」；未经公证，首次打开前需解除隔离（见下方） |
 
@@ -105,10 +105,10 @@ Flutter 多端独立短剧 / 影视应用，手机、平板、电脑和电视分
 > Android 安装提示 `INSTALL_FAILED_NO_MATCHING_ABIS` 表示 APK 与设备架构不匹配，请换对应架构的安装包。
 
 > [!IMPORTANT]
-> macOS 首次打开前在终端执行（全站源版把 `红果鉴.app` 换成 dmg 里的应用名）：
+> macOS 首次打开前在终端执行：
 >
 > ```sh
-> xattr -dr com.apple.quarantine /Applications/红果鉴.app
+> xattr -dr com.apple.quarantine /Applications/果洞漫剧.app
 > ```
 
 ## 检查更新与使用统计
@@ -116,7 +116,7 @@ Flutter 多端独立短剧 / 影视应用，手机、平板、电脑和电视分
 | 请求 | 发送内容 |
 | --- | --- |
 | 检查更新 | 不发送任何数据，只读取最新版本号。启动时检查一次，有新版时每次启动都会提示，可选择忽略此版本或不再提醒 |
-| 匿名使用统计 | 只发送：首次统计时生成的随机编号（与设备、账号无关）、应用版本号、平台（Android / iOS / Windows / macOS）、所属版本（红果鉴或全站源版） |
+| 匿名使用统计 | 只发送：首次统计时生成的随机编号（与设备、账号无关）、应用版本号、平台（Android / iOS / Windows / macOS）、所属版本（果洞漫剧或全站源版） |
 
 不发送观看记录、追剧、搜索、站源设置或其他任何个人数据，接收端代码见 [`worker/`](worker)。两项都可以在 **设置 › 关于** 分别关闭，关闭后应用不会再发出对应的请求。
 
