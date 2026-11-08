@@ -16,14 +16,14 @@ class BuildVariant:
     @property
     def bundle_identifier(self):
         if not self.all_sources:
-            return 'com.guoapp.phoenix'
-        return os.environ.get('ZHENGUOJIAN_PACKAGE_NAME', '').strip() or 'com.guoapp.all'
+            return 'com.guodong.manju'
+        return os.environ.get('ZHENGUOJIAN_PACKAGE_NAME', '').strip() or 'com.guodong.manju.all'
 
     @property
     def display_name(self):
         if not self.all_sources:
-            return '红果鉴'
-        return os.environ.get('ZHENGUOJIAN_DISPLAY_NAME', '').strip() or '真果鉴'
+            return '果洞漫剧'
+        return os.environ.get('ZHENGUOJIAN_DISPLAY_NAME', '').strip() or '果洞漫剧'
 
     @property
     def arguments(self):
@@ -52,4 +52,4 @@ class BuildVariant:
 
 def add_variant_argument(parser):
     parser.add_argument('--all-sources', action='store_true',
-                        help='构建包含全部站源的全站源版；默认构建仅红果的红果鉴')
+                        help='构建包含全部站源的全站源版；默认构建果洞漫剧')
