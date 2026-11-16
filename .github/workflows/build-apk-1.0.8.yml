@@ -1,0 +1,116 @@
+name: Build APK 1.0.8 (universal)
+
+on:
+  push:
+    branches:
+      - feat/1.0.8-ui
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GOPROXY: https://proxy.golang.org,direct
+  GOSUMDB: sum.golang.org
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: feat/1.0.8-ui
+          fetch-depth: 0
+
+      - name: Import 1.0.8 source snapshot
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://aka.doubaocdn.com/s/t6QSw4flS1" -o /tmp/src.zip
+          rm -rf /tmp/src
+          mkdir -p /tmp/src
+          unzip -q /tmp/src.zip -d /tmp/src
+          rsync -a --delete --exclude '.git' --exclude '.github' /tmp/src/guoapp-main/ ./
+          git status --short | head -40
+
+      - name: Commit snapshot
+        run: |
+          set -euo pipefail
+          git config user.name "doubao-ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "源码已是最新，无需提交"
+          else
+            git commit -m "feat: 站源分类展示/采集失败分类/浏览方式适配 (1.0.8+108)"
+            git push origin HEAD:feat/1.0.8-ui
+          fi
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.1"
+          cache-dependency-path: native/go.sum
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.9"
+          channel: stable
+          cache: true
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android SDK and NDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
+
+      - name: Build native core (arm64-v8a, armeabi-v7a, x86_64)
+        run: python scripts/build_native.py --platform android
+
+      - name: Flutter dependencies
+        run: flutter pub get
+
+      - name: Build universal release APK
+        run: flutter build apk --release --no-pub
+
+      - name: Verify APK
+        run: |
+          set -euo pipefail
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          ls -lh "$APK"
+          "${ANDROID_HOME}/build-tools/36.0.0/aapt2" dump badging "$APK" | grep -E "package:|sdkVersion|targetSdkVersion|native-code"
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            unzip -l "$APK" | grep -q "lib/$abi/libduanju_core.so" || { echo "缺少 $abi 核心"; exit 1; }
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: guodong-manju-1.0.8-universal
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="apk-1.0.8-${{ github.run_number }}"
+          cp build/app/outputs/flutter-apk/app-release.apk guodong-manju-1.0.8-universal.apk
+          cat > notes.md <<'EOF'
+          果洞漫剧 1.0.8 全架构测试包（Android 7.0+，arm64-v8a / armeabi-v7a / x86_64）。
+          包含：站源分组展示、采集失败九类提示、按内容适配浏览方式。
+          签名：Android Debug；安装前请先卸载同包名旧版（com.guodong.manju）。
+          EOF
+          gh release create "$TAG" guodong-manju-1.0.8-universal.apk --target "$GITHUB_SHA" --title "果洞漫剧 1.0.8 全架构包" --notes-file notes.md
